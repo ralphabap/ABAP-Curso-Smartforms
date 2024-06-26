@@ -1,0 +1,66 @@
+
+TRADUÇÃO: SE63
+
+1- Você chama o formulário de impressão usando dois módulos da função.
+ O primeiro módulo usa o nome do formulário gerado da função.  Então
+você chama este módulo.
+
+2- No programa, definir uma variável do tipo rs281_fnam para receber o
+nome do módulo de função gerado. Ex: data  fm_name type rs38l_fnam.
+
+3- Se desejado, você pode chamar o módulo de função SSF_FIELD_LIST.
+Ele retorna uma lista dos parâmetros usados realmente no formulário.
+Você pode usar esta informação para limitar a seleção dos dados, se
+necessário.
+
+4- Chame o módulo de função SSF_FUNCTION_MODULE_NAME. Ele retorna o
+nome do módulo de função gerado.
+CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
+  EXPORTING
+    FORMNAME             = '<form name>'
+  IMPORTING
+    FM_NAME              = fm_name
+  EXCEPTIONS
+    NO_FORM              = 1
+    NO_FUNCTION_MODULE   = 2
+    OTHERS               = 3.
+IF SY-SUBRC <> 0.
+   <error handling>
+ENDIF.
+
+5- Chame o módulo de função gerado. Para fazer isto, usar o botão
+"Padrão" CALL FUNCTION no editor ABAP.  (para evitar de ter que copiar
+manualmente todos os parâmetros).  Substitua então o nome do módulo de
+função com a variável fm_name definida na etapa 2.
+CALL FUNCTION  fm_name
+  EXPORTING
+*   ARCHIVE_INDEX              =
+*   ARCHIVE_PARAMETERS         =
+*   CONTROL_PARAMETERS         =
+*   MAIL_APPL_OBJ              =
+*   MAIL_RECIPIENT             =
+*   MAIL_SENDER                =
+*   OUTPUT_OPTIONS             =
+*   USER_SETTINGS              = 'X'
+    G_CARRID                   = <variable>
+    G_CONNID                   = <variable>
+    G_FLDATE                   = <variable>
+* IMPORTING
+*   DOCUMENT_OUTPUT_INFO       =
+*   JOB_OUTPUT_INFO            =
+*   JOB_OUTPUT_OPTIONS         =
+  TABLES
+    GT_SBOOK                   = <internal table>
+  EXCEPTIONS
+    FORMATTING_ERROR           = 1
+    INTERNAL_ERROR             = 2
+    SEND_ERROR                 = 3
+    USER_CANCELED              = 4
+    OTHERS                     = 5.
+IF SY-SUBRC <> 0.
+   <error handling>
+ENDIF.
+
+Neste exemplo, três variáveis e uma tabela interna são passadas. Os
+parâmetros G_CARRID, G_CONNID, G_FLDATA, e GT_SBOOK precisam ser
+definidos antes no formulário.
